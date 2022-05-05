@@ -7,6 +7,23 @@ ws = wb.active
 # 打开已有
 wb = load_workbook('文件名称.xlsx')
 
+from openpyxl import load_workbook
+# 加载存在的 excel 文件: 默认可读写
+wb = load_workbook("sample.xlsx")
+# 只读模式打开文件
+wb = load_workbook("sample.xlsx", read_only=True)
+
+from openpyxl import Workbook
+# 新建一个新的工作表（未保存）。
+wb = Workbook()
+# 只写模式
+wb = Workbook(write_only=True)
+# 保存文件，若加载路径与保存的路径一致将会被覆盖
+wb.save(r"F:\sample.xlsx")
+# 将文件作为模板保存 as_template 默认为 False
+wb.save("template.xltx", as_template=True)
+
+
 # 写入数据
 # 方式一：数据可以直接分配到单元格中(可以输入公式)
 ws['A1'] = 42
@@ -26,6 +43,50 @@ ws2 = wb.create_sheet("Mysheet", 0)
 >>> ws4 = wb.get_sheet_by_name("New Title")
 >>> ws is ws3 is ws4
 True
+
+# 获取某个单元格的值，观察 excel 发现也是先字母再数字的顺序，即先列再行
+c3 = my_sheet["C3"]
+# 列，即 C
+c3.column
+# 行，即 3
+c3.row
+# 坐标，即 C3
+c3.coordinate
+# 对应的值
+c3.value
+# 除了用下标的方式获得，还可以用cell 函数, 换成数字，这个表示 C3
+c3_cell = my_sheet.cell(row=3, column=3)
+print(c3_cell.value)
+# 获得最大列和最大行
+print(my_sheet.max_row)
+print(my_sheet.max_column)
+# 按行读取: 按 A1、B1、C1 顺序返回
+for row in my_sheet.rows:
+    for cell in row:
+        print(cell.value)
+# 按列读取: 按 A1、A2、A3 顺序返回
+for column in my_sheet.columns:
+    for cell in column:
+        print(cell.value)
+
+# 获取某一行的数据，例:获取第三行 tuple 对象
+for cell in list(my_sheet.rows)[2]:
+    print(cell.value)
+
+# 获取矩形区间数据
+for i in range(1, 4):
+    for j in range(1, 3):
+        print(my_sheet.cell(row=i, column=j))
+
+# iter_rows() 方法获得多个单元格
+for row in ws.iter_rows("A1:C2"):
+    for cell in row:
+        print cell
+
+# 像切片一样使用        
+for row_cell in my_sheet["A1":"B3"]:
+    for cell in row_cell:
+        print(cell)
 
 # 查看表名（sheet）
 # 显示所有表名
